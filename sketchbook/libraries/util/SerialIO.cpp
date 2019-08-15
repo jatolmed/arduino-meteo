@@ -86,28 +86,12 @@ char *SerialIO::readline()
 	int currentPosition = 0;
 	int totalSize = _bufferSize;
 
-	char *aux;
 	char *buffer = (char *)malloc(_bufferSize*sizeof(char));
 	char *result = (char *)malloc(_bufferSize*sizeof(char));
 	int bytes = Serial.readBytesUntil(__serial_NEW_LINE,result,_bufferSize);
 	while(bytes==_bufferSize)
 	{
 		bytes = Serial.readBytesUntil(__serial_NEW_LINE,buffer,_bufferSize);
-
-		/*
-		aux = (char *)malloc(totalSize*sizeof(char));
-		memcpy(aux,result,totalSize);
-
-		currentPosition = totalSize;
-		totalSize += _bufferSize;
-
-		free(result);
-		result = (char *)malloc(totalSize*sizeof(char));
-		memcpy(result,aux,currentPosition);
-		memcpy(result+currentPosition,buffer,_bufferSize);
-
-		free(aux);
-		*/
 
 		currentPosition = totalSize;
 		totalSize += _bufferSize;
