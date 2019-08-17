@@ -84,23 +84,24 @@ void SerialIO::message(const char *title, const char *subtitle, float value, con
 char *SerialIO::readline()
 {
 	int currentPosition = 0;
-	int totalSize = _bufferSize;
 
 	char *buffer = (char *)malloc(_bufferSize*sizeof(char));
-	char *result = (char *)malloc(_bufferSize*sizeof(char));
-	int bytes = Serial.readBytesUntil(__serial_NEW_LINE,result,_bufferSize);
+	int bytes = Serial.readBytesUntil(__serial_NEW_LINE,buffer,_bufferSize);
+
+	int totalSize = bytes;
+	char *result = (char *)malloc((totalSize+1)*sizeof(char));
+	memcpy(result,buffer,totalSize);
 	while(bytes==_bufferSize)
 	{
 		bytes = Serial.readBytesUntil(__serial_NEW_LINE,buffer,_bufferSize);
 
 		currentPosition = totalSize;
-		totalSize += _bufferSize;
+		totalSize += bytes;
 
-		result = (char *)realloc(result,totalSize*sizeof(char));
-		memcpy(result+currentPosition,buffer,_bufferSize);
+		result = (char *)realloc(result,(totalSize+1)*sizeof(char));
+		memcpy(result+currentPosition,buffer,bytes);
 	}
-	while(bytes==_bufferSize);
-	result[currentPosition+bytes] = __serial_NULL_CHAR;
+	result[totalSize] = __serial_NULL_CHAR;
 
 	free(buffer);
 	return result;
